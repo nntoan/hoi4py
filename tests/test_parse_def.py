@@ -2,7 +2,7 @@ import unittest
 
 import pyparsing
 
-from src.vanillaParsing.parse_def import CurlyDict, Date, Dictionary, Float, Identifier, Integer, List, String
+from src.vanilla_parsing.parse_def import CurlyDict, Date, Dictionary, Float, Identifier, Integer, List, String
 
 
 def assert_for_dict_equal(self, parse_result: pyparsing.ParseResults, assert_dict: dict, ):
