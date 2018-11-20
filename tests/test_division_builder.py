@@ -8,3 +8,16 @@ class LandDivisionBuilderCase(unittest.TestCase):
         builder = LandDivisionBuilder("data/")
 
         self.assertIsNotNone(builder.units_dict)
+        self.assertIsNotNone(builder.equipment_stats_dict)
+
+    def test_calculate_stats(self):
+        builder = LandDivisionBuilder("data/")
+        division_template_dict = {
+            'name': 'Test-Division',
+            'division_names_group': 'Test_Arm_01',
+            'regiments': ['infantry'] * 25,
+            'support': ['engineer']
+        }
+        result = builder.calculate_stats(division_template_dict)
+
+        self.assertIsNotNone(result)
