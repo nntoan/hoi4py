@@ -1,7 +1,12 @@
-from src.unit_builder.utils import get_item_dict
+from src.division_builder.utils import get_item_dict
 
 
-class LandUnitBuilder:
+class LandDivision:
+    def __init__(self, unit_dict):
+        pass
+
+
+class LandDivisionBuilder:
     def __init__(self, root_path):
         file_list = ['anti_tank.txt', 'anti_tank_brigade.txt', 'anti-air.txt', 'anti-air_brigade.txt', 'artillery.txt',
                      'artillery_brigade.txt', 'cavalry.txt', 'engineer.txt', 'field_hospital.txt', 'heavy_armor.txt',
@@ -10,3 +15,4 @@ class LandUnitBuilder:
                      'sp_artillery_brigade.txt',
                      'super_heavy_armor.txt', 'tank_destroyer_brigade.txt']
         self.units_dict = get_item_dict(root_path + "common/units/", file_list)
+        pass

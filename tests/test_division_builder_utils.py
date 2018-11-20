@@ -1,9 +1,9 @@
 import unittest
 
-from src.unit_builder.utils import get_item_dict, list_item_path, get_item
+from src.division_builder.utils import get_item_dict, list_item_path, get_item
 
 
-class LandUnitBuilderCase(unittest.TestCase):
+class LandDivisionBuilderUtilsCase(unittest.TestCase):
     def test_get_item_dict(self):
         file_list = ['infantry.txt']
         root_path = 'data/'
