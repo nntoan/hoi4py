@@ -9,4 +9,4 @@ class LandUnitBuilder:
                      'modern_armor.txt', 'recon.txt', 'signal.txt', 'sp_anti-air_brigade.txt',
                      'sp_artillery_brigade.txt',
                      'super_heavy_armor.txt', 'tank_destroyer_brigade.txt']
-        units_dict = get_item_dict(root_path + "common/units/", file_list)
+        self.units_dict = get_item_dict(root_path + "common/units/", file_list)
