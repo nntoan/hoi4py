@@ -22,12 +22,10 @@ class LandDivisionBuilder:
         self.equipment_stats_dict = {}
 
         for equipment in equipment_dict:
-            if equipment.endswith('3'):
-                print(equipment)
-            if equipment.endswith('2'):
-                print(equipment)
-            if equipment.endswith('1'):
-                print(equipment)
+            if equipment[-1:].isdigit():
+                _dict = equipment_dict[equipment[:-2]].copy()
+                _dict.update(equipment_dict[equipment])
+                self.equipment_stats_dict[equipment] = _dict
         pass
 
     def calculate_stats(self, division_template_dict: dict) -> dict:
