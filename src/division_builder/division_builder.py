@@ -21,16 +21,29 @@ class LandDivisionBuilder:
         equipment_dict = get_item_dict(root_path + "common/units/equipment/", equipment_file_list)
         self.equipment_stats_dict = {}
 
+        equipment_stat_list = ['maximum_speed', 'reliability', 'defense', 'breakthrough', 'hardness', 'armor_value',
+                               'soft_attack', 'hard_attack', 'ap_attack', 'air_attack', 'build_cost_ic', 'resources',
+                               'archetype', 'priority', 'visual_level']
+
         for equipment in equipment_dict:
             if equipment[-1:].isdigit():
                 _dict = equipment_dict[equipment[:-2]].copy()
                 _dict.update(equipment_dict[equipment])
+                for item in set(_dict.keys()) - set(equipment_stat_list):
+                    _dict.pop(item)
                 self.equipment_stats_dict[equipment] = _dict
         pass
 
     def calculate_stats(self, division_template_dict: dict) -> dict:
         stats = {}
-        # for regiment in division_template_dict['regiments']:
-        #     for stat in self.units_dict[regiment]:
-        #         stats[stat] += stat
+        for regiment in division_template_dict['regiments']:
+            for stat in self.units_dict[regiment]:
+                if not stat in stats.keys():
+                    stats[stat] = []
+                stats[stat].append(self.units_dict[regiment][stat])
+        temp = {}
+        for item in self.equipment_stats_dict:
+            temp[item] = list(self.equipment_stats_dict[item].keys())
+        for item in temp:
+            print(item, len(temp[item]))
         return stats

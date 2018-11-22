@@ -15,8 +15,12 @@ class LandDivisionBuilderCase(unittest.TestCase):
         division_template_dict = {
             'name': 'Test-Division',
             'division_names_group': 'Test_Arm_01',
-            'regiments': ['infantry'] * 25,
-            'support': ['engineer']
+            'regiments': ['infantry'] * 7 + ['artillery_brigade'] * 2,
+            'support': ['engineer'],
+            'equipments': {
+                'infantry': 'infantry_equipment_1',
+                'artillery_brigade': 'artillery_equipment_1'
+            }
         }
         result = builder.calculate_stats(division_template_dict)
 
