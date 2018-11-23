@@ -1,4 +1,7 @@
+from collections import Counter
+
 from src.division_builder.utils import get_item_dict
+
 
 class LandDivision:
     def __init__(self, division_template_dict: dict):
@@ -35,15 +38,48 @@ class LandDivisionBuilder:
         pass
 
     def calculate_stats(self, division_template_dict: dict) -> dict:
-        stats = {}
+        stats_dict = {}
         for regiment in division_template_dict['regiments']:
             for stat in self.units_dict[regiment]:
-                if not stat in stats.keys():
-                    stats[stat] = []
-                stats[stat].append(self.units_dict[regiment][stat])
-        temp = {}
-        for item in self.equipment_stats_dict:
-            temp[item] = list(self.equipment_stats_dict[item].keys())
-        for item in temp:
-            print(item, len(temp[item]))
-        return stats
+                if not stat in stats_dict.keys():
+                    stats_dict[stat] = []
+                stats_dict[stat].append(self.units_dict[regiment][stat])
+            equipment_name = division_template_dict['equipments'][regiment]
+            for stat in self.equipment_stats_dict[equipment_name]:
+                if not stat in stats_dict.keys():
+                    stats_dict[stat] = []
+                stats_dict[stat].append(self.equipment_stats_dict[equipment_name][stat])
+
+        _need = Counter({})
+        for item in stats_dict['need']:
+            _need = _need + Counter(item)
+        result = {
+            'Max Speed': min(stats_dict['maximum_speed']),
+            'HP': sum(stats_dict['max_strength']),
+            'Organisation': sum(stats_dict['max_organisation'], 0.0) / len(stats_dict['max_organisation']),
+            'Recovery Rate': sum(stats_dict['default_morale'], 0.0) / len(stats_dict['default_morale']),
+            'Reconnaissance': 0,  # TODO
+            'Suppression': sum(stats_dict['suppression']),
+            'Weight': sum(stats_dict['weight']),
+            'Supply use': sum(stats_dict['weight']),
+            'Reliability': 0,  # TODO
+            'Trickleback': 0,  # TODO
+            'Exp. Loss': 0,  # TODO
+
+            'Soft attack': sum(stats_dict['soft_attack']),
+            'Hard attack': sum(stats_dict['hard_attack']),
+            'Air attack': sum(stats_dict['air_attack']),
+            'Defense': sum(stats_dict['defense']),
+            'Breakthrough': sum(stats_dict['breakthrough']),
+            'Armor': max(stats_dict['ap_attack']) * 0.3 + sum(stats_dict['armor_value']) * 0.7,
+            'Piercing': max(stats_dict['ap_attack']) * 0.4 + sum(stats_dict['ap_attack'], 0.0) / len(
+                stats_dict['ap_attack']) * 0.6,
+            'Entrenchment': 0,  # TODO
+            'Eq. Capture Ratio': 0,  # TODO
+            'Combat Width': sum(stats_dict['combat_width']),
+            'Manpower': sum(stats_dict['manpower']),
+            'Training Time': max(stats_dict['training_time']),
+            'Need': dict(_need)
+
+        }
+        return result
