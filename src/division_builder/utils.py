@@ -2,6 +2,7 @@ import os
 
 from src.vanilla_parsing.parse_def import Dictionary
 
+round_degree = 5
 
 def get_item_dict(root_path: str, file_list: list) -> dict:
     file_path_list = list_item_path(root_path, file_list)
@@ -27,3 +28,19 @@ def get_item(file_path: str) -> dict:
     res_dict = {k: v.asDict() for k, v in res[0].items()}
 
     return res_dict
+
+
+def round_sum(stat: list):
+    return round(sum(stat), round_degree)
+
+
+def round_min(stat: list):
+    return round(min(stat), round_degree)
+
+
+def round_max(stat: list):
+    return round(max(stat), round_degree)
+
+
+def round_util(stat):
+    return round(stat, round_degree)

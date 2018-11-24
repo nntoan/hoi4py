@@ -1,6 +1,6 @@
 from collections import Counter
 
-from src.division_builder.utils import get_item_dict
+from src.division_builder.utils import get_item_dict, round_sum, round_min, round_max, round_util
 
 
 class LandDivision:
@@ -47,56 +47,54 @@ class LandDivisionBuilder:
                     stat_dict[stat] = self.units_dict[battalion][stat]
                 for equipment_name in division_template_dict['equipments'][battalion]:
                     for stat in equipment_stats_dict[equipment_name]:
-                        if not stat in stat_dict.keys():
-                            stat_dict[stat] = equipment_stats_dict[equipment_name][stat]
-                        else:
-                            stat_dict[stat] = equipment_stats_dict[equipment_name][stat] * (1 + stat_dict[stat])
+                        stat_dict[stat] = equipment_stats_dict[equipment_name][stat]
                     stat_dicts[battalion] = stat_dict
                 if battalion in division_template_dict['technologies']:
                     for stat in division_template_dict['technologies'][battalion]:
                         stat_dicts[battalion][stat] = stat_dicts[battalion][stat] * (
                                     1 + sum(division_template_dict['technologies'][battalion][stat]))
 
-        stats_dict = {}  # type: dict
+        stats_list = [
+            'maximum_speed', 'max_strength', 'max_organisation', 'default_morale', 'suppression', 'weight',
+            'supply_consumption', 'soft_attack', 'hard_attack', 'air_attack', 'defense', 'breakthrough',
+            'armor_value', 'ap_attack', 'combat_width', 'manpower', 'training_time', 'need', 'reliability_factor',
+            'equipment_capture_factor', 'casualty_trickleback', 'experience_loss_factor', 'entrenchment', 'recon',
+        ]
+        stats_dict = dict((k, []) for k in stats_list)  # type: dict
         for battalion_type in battalion_types:
             for battalion in division_template_dict[battalion_type]:
-                for stat in stat_dicts[battalion]:
-                    if stat not in stats_dict.keys():
-                        stats_dict[stat] = []
+                for stat in set(stat_dicts[battalion]) & set(stats_list):
                     stats_dict[stat].append(stat_dicts[battalion][stat])
 
         _need = Counter({})  # type: Counter
         for item in stats_dict['need']:
             _need = _need + Counter(item)
-        round_degree = 5
         result = {
-            'Max Speed': round(min(stats_dict['maximum_speed']), round_degree),
-            'HP': round(sum(stats_dict['max_strength']), round_degree),
-            'Organisation': round(sum(stats_dict['max_organisation'], 0.0) / len(stats_dict['max_organisation']),
-                                  round_degree),
-            'Recovery Rate': round(sum(stats_dict['default_morale'], 0.0) / len(stats_dict['default_morale']),
-                                   round_degree),
-            'Reconnaissance': 0,  # TODO
-            'Suppression': round(sum(stats_dict['suppression']), round_degree),
-            'Weight': round(sum(stats_dict['weight']), round_degree),
-            'Supply use': round(sum(stats_dict['supply_consumption']), round_degree),
-            'Reliability': 0,  # TODO
-            'Trickleback': 0,  # TODO
-            'Exp. Loss': 0,  # TODO
+            'Max Speed': round_min(stats_dict['maximum_speed']),
+            'HP': round_sum(stats_dict['max_strength']),
+            'Organisation': round_util(sum(stats_dict['max_organisation']) / len(stats_dict['max_organisation'])),
+            'Recovery Rate': round_util(sum(stats_dict['default_morale']) / len(stats_dict['default_morale'])),
+            'Reconnaissance': round_sum(stats_dict['recon']),
+            'Suppression': round_sum(stats_dict['suppression']),
+            'Weight': round_sum(stats_dict['weight']),
+            'Supply use': round_sum(stats_dict['supply_consumption']),
+            'Reliability': round_sum(stats_dict['reliability_factor']),
+            'Trickleback': round_sum(stats_dict['casualty_trickleback']),
+            'Exp. Loss': round_sum(stats_dict['experience_loss_factor']),
 
-            'Soft attack': round(sum(stats_dict['soft_attack']), round_degree),
-            'Hard attack': round(sum(stats_dict['hard_attack']), round_degree),
-            'Air attack': round(sum(stats_dict['air_attack']), round_degree),
-            'Defense': round(sum(stats_dict['defense']), round_degree),
-            'Breakthrough': round(sum(stats_dict['breakthrough']), round_degree),
-            'Armor': round(max(stats_dict['armor_value']) * 0.3 + sum(stats_dict['armor_value']) * 0.7, round_degree),
-            'Piercing': round(max(stats_dict['ap_attack']) * 0.4 + sum(stats_dict['ap_attack'], 0.0) / len(
-                stats_dict['ap_attack']) * 0.6, round_degree),
-            'Entrenchment': 0,  # TODO
-            'Eq. Capture Ratio': 0,  # TODO
-            'Combat Width': round(sum(stats_dict['combat_width']), round_degree),
-            'Manpower': round(sum(stats_dict['manpower']), round_degree),
-            'Training Time': round(max(stats_dict['training_time']), round_degree),
+            'Soft attack': round_sum(stats_dict['soft_attack']),
+            'Hard attack': round_sum(stats_dict['hard_attack']),
+            'Air attack': round_sum(stats_dict['air_attack']),
+            'Defense': round_sum(stats_dict['defense']),
+            'Breakthrough': round_sum(stats_dict['breakthrough']),
+            'Armor': round_util(max(stats_dict['armor_value']) * 0.3 + sum(stats_dict['armor_value']) * 0.7),
+            'Piercing': round_util(max(stats_dict['ap_attack']) * 0.4 + sum(stats_dict['ap_attack']) / len(
+                stats_dict['ap_attack']) * 0.6),
+            'Entrenchment': round_sum(stats_dict['entrenchment']),
+            'Eq. Capture Ratio': round_sum(stats_dict['equipment_capture_factor']),
+            'Combat Width': round_sum(stats_dict['combat_width']),
+            'Manpower': round_sum(stats_dict['manpower']),
+            'Training Time': round_max(stats_dict['training_time']),
             'Need': dict(_need)
 
         }

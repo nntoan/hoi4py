@@ -16,13 +16,13 @@ class LandDivisionBuilderCase(unittest.TestCase):
             'name': 'Test-Division',
             'division_names_group': 'Test_Arm_01',
             'regiments': ['infantry'] * 1 + ['artillery_brigade'] * 1,
-            'supports': ['artillery'],
+            'supports': ['engineer', 'recon'],
             'equipments': {
                 'infantry': ['infantry_equipment_3'],
                 'artillery_brigade': ['artillery_equipment_2'],
-                'engineer': ['infantry_equipment_1', 'support_equipment_1'],
+                'engineer': ['infantry_equipment_3', 'support_equipment_1'],
                 'artillery': ['artillery_equipment_2'],
-                'recon': ['infantry_equipment_1'],
+                'recon': ['infantry_equipment_3'],
                 'anti_air': ['anti_air_equipment_1'],
                 'anti_tank': ['anti_tank_equipment_1'],
             },
@@ -37,6 +37,17 @@ class LandDivisionBuilderCase(unittest.TestCase):
                 },
                 'artillery': {
                     'soft_attack': [0.1, 0.1, 0.1, 0.2],
+                },
+                'engineer': {
+                    'soft_attack': [-0.5, 0.2],
+                    'defense': [0.1],
+                    'breakthrough': [0.5],
+                },
+                'recon': {
+                    'soft_attack': [-0.9, 0.2],
+                    'hard_attack': [-0.9],
+                    'defense': [-0.5],
+                    'breakthrough': [-0.5],
                 }
             }
         }
