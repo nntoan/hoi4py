@@ -35,67 +35,59 @@ class LandDivisionBuilder:
                 for item in set(_dict.keys()) - set(equipment_stat_list):
                     _dict.pop(item)
                 self.equipment_stats_dict[equipment] = _dict
-        pass
 
     def calculate_stats(self, division_template_dict: dict) -> dict:
         stats_dict = {}  # type: dict
-        for regiment in division_template_dict['regiments']:
-            regiment_stat_dict = {}  # type: dict
-            for stat in self.units_dict[regiment]:
-                regiment_stat_dict[stat] = self.units_dict[regiment][stat]
-            equipment_name = division_template_dict['equipments'][regiment]
-            for stat in self.equipment_stats_dict[equipment_name]:
-                regiment_stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat]
-            for item in regiment_stat_dict:
-                if not item in stats_dict.keys():
-                    stats_dict[item] = []
-                stats_dict[item].append(regiment_stat_dict[item])
+        battalion_types = ['regiments', 'supports']
+        for battalion_type in battalion_types:
+            for battalion in division_template_dict[battalion_type]:
+                stat_dict = {}  # type: dict
+                for stat in self.units_dict[battalion]:
+                    stat_dict[stat] = self.units_dict[battalion][stat]
+                equipment_name = division_template_dict['equipments'][battalion]
+                for stat in self.equipment_stats_dict[equipment_name]:
+                    if not stat in stat_dict.keys():
+                        stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat]
+                    else:
+                        stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat] * (1 + stat_dict[stat])
+                for item in stat_dict:
+                    if not item in stats_dict.keys():
+                        stats_dict[item] = []
+                    stats_dict[item].append(stat_dict[item])
 
-        for support in division_template_dict['supports']:
-            support_stat_dict = {}  # type: dict
-            for stat in self.units_dict[support]:
-                support_stat_dict[stat] = self.units_dict[support][stat]
-            equipment_name = division_template_dict['equipments'][support]
-            for stat in self.equipment_stats_dict[equipment_name]:
-                if not stat in support_stat_dict.keys():
-                    support_stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat]
-                else:
-                    support_stat = self.equipment_stats_dict[equipment_name][stat] * (1 + support_stat_dict[stat])
-                    support_stat_dict[stat] = support_stat
-            for item in support_stat_dict:
-                if not item in stats_dict.keys():
-                    stats_dict[item] = []
-                stats_dict[item].append(support_stat_dict[item])
 
         _need = Counter({})  # type: Counter
         for item in stats_dict['need']:
             _need = _need + Counter(item)
+        round_degree = 5
         result = {
-            'Max Speed': min(stats_dict['maximum_speed']),
-            'HP': sum(stats_dict['max_strength']),
-            'Organisation': sum(stats_dict['max_organisation'], 0.0) / len(stats_dict['max_organisation']),
-            'Recovery Rate': sum(stats_dict['default_morale'], 0.0) / len(stats_dict['default_morale']),
+            'Max Speed': round(min(stats_dict['maximum_speed']), round_degree),
+            'HP': round(sum(stats_dict['max_strength']), round_degree),
+            'Organisation': round(sum(stats_dict['max_organisation'], 0.0) / len(stats_dict['max_organisation']),
+                                  round_degree),
+            'Recovery Rate': round(sum(stats_dict['default_morale'], 0.0) / len(stats_dict['default_morale']),
+                                   round_degree),
             'Reconnaissance': 0,  # TODO
-            'Suppression': sum(stats_dict['suppression']),
-            'Weight': sum(stats_dict['weight']),
-            'Supply use': sum(stats_dict['supply_consumption']),
+            'Suppression': round(sum(stats_dict['suppression']), round_degree),
+            'Weight': round(sum(stats_dict['weight']), round_degree),
+            'Supply use': round(sum(stats_dict['supply_consumption']), round_degree),
             'Reliability': 0,  # TODO
             'Trickleback': 0,  # TODO
             'Exp. Loss': 0,  # TODO
 
-            'Soft attack': sum(stats_dict['soft_attack']),
-            'Hard attack': sum(stats_dict['hard_attack']),
-            'Air attack': sum(stats_dict['air_attack']),
-            'Defense': sum(stats_dict['defense']),
-            'Breakthrough': sum(stats_dict['breakthrough']),
-            'Armor': max(stats_dict['armor_value']) * 0.3 + sum(stats_dict['armor_value']) * 0.7,
-            'Piercing': max(stats_dict['ap_attack']) * 0.4 + sum(stats_dict['ap_attack'], 0.0) / len(
-                stats_dict['ap_attack']) * 0.6,
+            'Soft attack': round(sum(stats_dict['soft_attack']), round_degree),
+            'Hard attack': round(sum(stats_dict['hard_attack']), round_degree),
+            'Air attack': round(sum(stats_dict['air_attack']), round_degree),
+            'Defense': round(sum(stats_dict['defense']), round_degree),
+            'Breakthrough': round(sum(stats_dict['breakthrough']), round_degree),
+            'Armor': round(max(stats_dict['armor_value']) * 0.3 + sum(stats_dict['armor_value']) * 0.7, round_degree),
+            'Piercing': round(max(stats_dict['ap_attack']) * 0.4 + sum(stats_dict['ap_attack'], 0.0) / len(
+                stats_dict['ap_attack']) * 0.6, round_degree),
             'Entrenchment': 0,  # TODO
             'Eq. Capture Ratio': 0,  # TODO
-            'Combat Width': sum(stats_dict['combat_width']),
-            'Manpower': sum(stats_dict['manpower']),
-            'Training Time': max(stats_dict['training_time']),
+            'Combat Width': round(sum(stats_dict['combat_width']), round_degree),
+            'Manpower': round(sum(stats_dict['manpower']), round_degree),
+            'Training Time': round(max(stats_dict['training_time']), round_degree),
             'Need': dict(_need)
 
         }
