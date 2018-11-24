@@ -37,24 +37,29 @@ class LandDivisionBuilder:
                 self.equipment_stats_dict[equipment] = _dict
 
     def calculate_stats(self, division_template_dict: dict) -> dict:
-        stats_dict = {}  # type: dict
+        equipment_stats_dict = self.equipment_stats_dict.copy()
+        stat_dicts = {}  # type: dict
         battalion_types = ['regiments', 'supports']
         for battalion_type in battalion_types:
-            for battalion in division_template_dict[battalion_type]:
+            for battalion in set(division_template_dict[battalion_type]):
                 stat_dict = {}  # type: dict
                 for stat in self.units_dict[battalion]:
                     stat_dict[stat] = self.units_dict[battalion][stat]
                 equipment_name = division_template_dict['equipments'][battalion]
-                for stat in self.equipment_stats_dict[equipment_name]:
+                for stat in equipment_stats_dict[equipment_name]:
                     if not stat in stat_dict.keys():
-                        stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat]
+                        stat_dict[stat] = equipment_stats_dict[equipment_name][stat]
                     else:
-                        stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat] * (1 + stat_dict[stat])
-                for item in stat_dict:
-                    if not item in stats_dict.keys():
-                        stats_dict[item] = []
-                    stats_dict[item].append(stat_dict[item])
+                        stat_dict[stat] = equipment_stats_dict[equipment_name][stat] * (1 + stat_dict[stat])
+                stat_dicts[battalion] = stat_dict
 
+        stats_dict = {}  # type: dict
+        for battalion_type in battalion_types:
+            for battalion in division_template_dict[battalion_type]:
+                for stat in stat_dicts[battalion]:
+                    if stat not in stats_dict.keys():
+                        stats_dict[stat] = []
+                    stats_dict[stat].append(stat_dicts[battalion][stat])
 
         _need = Counter({})  # type: Counter
         for item in stats_dict['need']:
