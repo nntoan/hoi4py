@@ -25,8 +25,8 @@ class LandDivisionBuilder:
         self.equipment_stats_dict = {}  # type: dict
 
         equipment_stat_list = ['maximum_speed', 'reliability', 'defense', 'breakthrough', 'hardness', 'armor_value',
-                               'soft_attack', 'hard_attack', 'ap_attack', 'air_attack', 'build_cost_ic', 'resources',
-                               'archetype', 'priority', 'visual_level']
+                               'soft_attack', 'hard_attack', 'ap_attack', 'air_attack',
+                               'priority', 'visual_level']
 
         for equipment in equipment_dict:
             if equipment[-1:].isdigit():
@@ -45,13 +45,17 @@ class LandDivisionBuilder:
                 stat_dict = {}  # type: dict
                 for stat in self.units_dict[battalion]:
                     stat_dict[stat] = self.units_dict[battalion][stat]
-                equipment_name = division_template_dict['equipments'][battalion]
-                for stat in equipment_stats_dict[equipment_name]:
-                    if not stat in stat_dict.keys():
-                        stat_dict[stat] = equipment_stats_dict[equipment_name][stat]
-                    else:
-                        stat_dict[stat] = equipment_stats_dict[equipment_name][stat] * (1 + stat_dict[stat])
-                stat_dicts[battalion] = stat_dict
+                for equipment_name in division_template_dict['equipments'][battalion]:
+                    for stat in equipment_stats_dict[equipment_name]:
+                        if not stat in stat_dict.keys():
+                            stat_dict[stat] = equipment_stats_dict[equipment_name][stat]
+                        else:
+                            stat_dict[stat] = equipment_stats_dict[equipment_name][stat] * (1 + stat_dict[stat])
+                    stat_dicts[battalion] = stat_dict
+                if battalion in division_template_dict['technologies']:
+                    for stat in division_template_dict['technologies'][battalion]:
+                        stat_dicts[battalion][stat] = stat_dicts[battalion][stat] * (
+                                    1 + sum(division_template_dict['technologies'][battalion][stat]))
 
         stats_dict = {}  # type: dict
         for battalion_type in battalion_types:
