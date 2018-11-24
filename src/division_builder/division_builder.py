@@ -22,7 +22,7 @@ class LandDivisionBuilder:
                                'motorized.txt', 'support.txt', 'tank_heavy.txt', 'tank_light.txt',
                                'tank_medium.txt', 'tank_modern.txt', 'tank_super_heavy.txt']
         equipment_dict = get_item_dict(root_path + "common/units/equipment/", equipment_file_list)
-        self.equipment_stats_dict = {}
+        self.equipment_stats_dict = {}  # type: dict
 
         equipment_stat_list = ['maximum_speed', 'reliability', 'defense', 'breakthrough', 'hardness', 'armor_value',
                                'soft_attack', 'hard_attack', 'ap_attack', 'air_attack', 'build_cost_ic', 'resources',
@@ -38,19 +38,36 @@ class LandDivisionBuilder:
         pass
 
     def calculate_stats(self, division_template_dict: dict) -> dict:
-        stats_dict = {}
+        stats_dict = {}  # type: dict
         for regiment in division_template_dict['regiments']:
+            regiment_stat_dict = {}  # type: dict
             for stat in self.units_dict[regiment]:
-                if not stat in stats_dict.keys():
-                    stats_dict[stat] = []
-                stats_dict[stat].append(self.units_dict[regiment][stat])
+                regiment_stat_dict[stat] = self.units_dict[regiment][stat]
             equipment_name = division_template_dict['equipments'][regiment]
             for stat in self.equipment_stats_dict[equipment_name]:
-                if not stat in stats_dict.keys():
-                    stats_dict[stat] = []
-                stats_dict[stat].append(self.equipment_stats_dict[equipment_name][stat])
+                regiment_stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat]
+            for item in regiment_stat_dict:
+                if not item in stats_dict.keys():
+                    stats_dict[item] = []
+                stats_dict[item].append(regiment_stat_dict[item])
 
-        _need = Counter({})
+        for support in division_template_dict['supports']:
+            support_stat_dict = {}  # type: dict
+            for stat in self.units_dict[support]:
+                support_stat_dict[stat] = self.units_dict[support][stat]
+            equipment_name = division_template_dict['equipments'][support]
+            for stat in self.equipment_stats_dict[equipment_name]:
+                if not stat in support_stat_dict.keys():
+                    support_stat_dict[stat] = self.equipment_stats_dict[equipment_name][stat]
+                else:
+                    support_stat = self.equipment_stats_dict[equipment_name][stat] * (1 + support_stat_dict[stat])
+                    support_stat_dict[stat] = support_stat
+            for item in support_stat_dict:
+                if not item in stats_dict.keys():
+                    stats_dict[item] = []
+                stats_dict[item].append(support_stat_dict[item])
+
+        _need = Counter({})  # type: Counter
         for item in stats_dict['need']:
             _need = _need + Counter(item)
         result = {
@@ -61,7 +78,7 @@ class LandDivisionBuilder:
             'Reconnaissance': 0,  # TODO
             'Suppression': sum(stats_dict['suppression']),
             'Weight': sum(stats_dict['weight']),
-            'Supply use': sum(stats_dict['weight']),
+            'Supply use': sum(stats_dict['supply_consumption']),
             'Reliability': 0,  # TODO
             'Trickleback': 0,  # TODO
             'Exp. Loss': 0,  # TODO
@@ -71,7 +88,7 @@ class LandDivisionBuilder:
             'Air attack': sum(stats_dict['air_attack']),
             'Defense': sum(stats_dict['defense']),
             'Breakthrough': sum(stats_dict['breakthrough']),
-            'Armor': max(stats_dict['ap_attack']) * 0.3 + sum(stats_dict['armor_value']) * 0.7,
+            'Armor': max(stats_dict['armor_value']) * 0.3 + sum(stats_dict['armor_value']) * 0.7,
             'Piercing': max(stats_dict['ap_attack']) * 0.4 + sum(stats_dict['ap_attack'], 0.0) / len(
                 stats_dict['ap_attack']) * 0.6,
             'Entrenchment': 0,  # TODO

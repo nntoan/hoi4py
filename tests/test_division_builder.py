@@ -16,7 +16,7 @@ class LandDivisionBuilderCase(unittest.TestCase):
             'name': 'Test-Division',
             'division_names_group': 'Test_Arm_01',
             'regiments': ['infantry'] * 7 + ['artillery_brigade'] * 2,
-            'support': ['engineer', 'artillery'],
+            'supports': ['engineer', 'artillery'],
             'equipments': {
                 'infantry': 'infantry_equipment_1',
                 'artillery_brigade': 'artillery_equipment_1',
