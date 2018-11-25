@@ -63,7 +63,7 @@ class LandDivisionBuilder:
             'armor_value', 'ap_attack', 'combat_width', 'manpower', 'training_time', 'need', 'reliability_factor',
             'equipment_capture_factor', 'casualty_trickleback', 'experience_loss_factor', 'entrenchment', 'recon',
         ]
-        stats_dict = dict((k, []) for k in stats_list)  # type: dict
+        stats_dict = {k: [] for k in stats_list}  # type: dict
         for battalion_type in battalion_types:
             for battalion in division_template_dict[battalion_type]:
                 for stat in set(stat_dicts[battalion]) & set(stats_list):

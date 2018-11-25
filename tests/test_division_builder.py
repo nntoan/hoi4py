@@ -15,8 +15,8 @@ class LandDivisionBuilderCase(unittest.TestCase):
         division_template_dict = {
             'name': 'Test-Division',
             'division_names_group': 'Test_Arm_01',
-            'regiments': ['infantry'] * 1 + ['artillery_brigade'] * 1,
-            'supports': ['engineer', 'recon'],
+            'regiments': ['infantry'] * 11 + ['artillery_brigade'] * 6,
+            'supports': ['engineer', 'recon', 'artillery'],
             'equipments': {
                 'infantry': ['infantry_equipment_3'],
                 'artillery_brigade': ['artillery_equipment_2'],
@@ -28,26 +28,63 @@ class LandDivisionBuilderCase(unittest.TestCase):
             },
             'technologies': {
                 'infantry': {
-                    'soft_attack': [0.05, 0.05, 0.05, 0.2],
-                    'defense': [0.05, 0.05, 0.05, 0.05],
-                    'breakthrough': [0.05, 0.05, 0.05, 0.05],
+                    'soft_attack': [
+                        +0.05 * 3,  # Infantry weapons
+                        +0.2  # Superior Firepower
+                    ],
+                    'defense': [
+                        +0.05 * 4  # Support weapons
+                    ],
+                    'breakthrough': [
+                        +0.05 * 4  # Support weapons
+                    ],
                 },
                 'artillery_brigade': {
-                    'soft_attack': [0.1, 0.1, 0.1],
+                    'soft_attack': [
+                        +0.1 * 3  # Artillery Upgrade
+                    ],
                 },
                 'artillery': {
-                    'soft_attack': [0.1, 0.1, 0.1, 0.2],
+                    'soft_attack': [
+                        -0.4,  # Support Companies
+                        +0.1 * 3  # Artillery Upgrade
+                    ],
+                    'hard_attack': [
+                        -0.4  # Support Companies
+                    ],
+                    'defense': [
+                        -0.4  # Support Companies
+                    ],
+                    'breakthrough': [
+                        -0.4  # Support Companies
+                    ],
                 },
                 'engineer': {
-                    'soft_attack': [-0.5, 0.2],
-                    'defense': [0.1],
-                    'breakthrough': [0.5],
+                    'soft_attack': [
+                        -0.5,  # Support Companies
+                        +0.2  # Superior Firepower
+                    ],
+                    'defense': [
+                        +0.1  # Support Companies
+                    ],
+                    'breakthrough': [
+                        +0.5  # Support Companies
+                    ],
                 },
                 'recon': {
-                    'soft_attack': [-0.9, 0.2],
-                    'hard_attack': [-0.9],
-                    'defense': [-0.5],
-                    'breakthrough': [-0.5],
+                    'soft_attack': [
+                        -0.9,  # Support Companies
+                        +0.2  # Superior Firepower
+                    ],
+                    'hard_attack': [
+                        -0.9  # Support Companies
+                    ],
+                    'defense': [
+                        -0.5  # Support Companies
+                    ],
+                    'breakthrough': [
+                        -0.5  # Support Companies
+                    ],
                 }
             }
         }
