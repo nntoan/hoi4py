@@ -4,6 +4,7 @@ from src.vanilla_parsing.parse_def import Dictionary
 
 round_degree = 5
 
+
 def get_item_dict(root_path: str, file_list: list) -> dict:
     file_path_list = list_item_path(root_path, file_list)
     item_dict = {}
@@ -44,3 +45,13 @@ def round_max(stat: list):
 
 def round_util(stat):
     return round(stat, round_degree)
+
+
+def trans_dict(in_dict: dict) -> dict:
+    out_dict = {}
+    for a in in_dict:
+        for b in in_dict[a]:
+            if b not in out_dict:
+                out_dict[b] = {}
+            out_dict[b][a] = in_dict[a][b]
+    return out_dict

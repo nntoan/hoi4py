@@ -10,23 +10,26 @@ class LandDivision:
 
 class LandDivisionBuilder:
     def __init__(self, root_path: str):
-        units_file_list = ['anti_tank.txt', 'anti_tank_brigade.txt', 'anti-air.txt', 'anti-air_brigade.txt',
-                           'artillery.txt',
-                     'artillery_brigade.txt', 'cavalry.txt', 'engineer.txt', 'field_hospital.txt', 'heavy_armor.txt',
-                     'infantry.txt', 'logistics.txt', 'maintenance.txt', 'medium_armor.txt', 'military_police.txt',
-                     'modern_armor.txt', 'recon.txt', 'signal.txt', 'sp_anti-air_brigade.txt',
-                           'sp_artillery_brigade.txt', 'super_heavy_armor.txt', 'tank_destroyer_brigade.txt']
+        units_file_list = [
+            'anti_tank.txt', 'anti_tank_brigade.txt', 'anti-air.txt', 'anti-air_brigade.txt', 'artillery.txt',
+            'artillery_brigade.txt', 'cavalry.txt', 'engineer.txt', 'field_hospital.txt', 'heavy_armor.txt',
+            'infantry.txt', 'logistics.txt', 'maintenance.txt', 'medium_armor.txt', 'military_police.txt',
+            'modern_armor.txt', 'recon.txt', 'signal.txt', 'sp_anti-air_brigade.txt', 'sp_artillery_brigade.txt',
+            'super_heavy_armor.txt', 'tank_destroyer_brigade.txt'
+        ]
         self.units_dict = get_item_dict(root_path + "common/units/", units_file_list)
-        equipment_file_list = ['anti_air.txt', 'anti_tank.txt', 'artillery.txt',
-                               'guided_missiles.txt', 'infantry.txt', 'mechanized.txt',
-                               'motorized.txt', 'support.txt', 'tank_heavy.txt', 'tank_light.txt',
-                               'tank_medium.txt', 'tank_modern.txt', 'tank_super_heavy.txt']
+        equipment_file_list = [
+            'anti_air.txt', 'anti_tank.txt', 'artillery.txt', 'guided_missiles.txt', 'infantry.txt', 'mechanized.txt',
+            'motorized.txt', 'support.txt', 'tank_heavy.txt', 'tank_light.txt', 'tank_medium.txt', 'tank_modern.txt',
+            'tank_super_heavy.txt'
+        ]
         equipment_dict = get_item_dict(root_path + "common/units/equipment/", equipment_file_list)
         self.equipment_stats_dict = {}  # type: dict
 
-        equipment_stat_list = ['maximum_speed', 'reliability', 'defense', 'breakthrough', 'hardness', 'armor_value',
-                               'soft_attack', 'hard_attack', 'ap_attack', 'air_attack',
-                               'priority', 'visual_level']
+        equipment_stat_list = [
+            'maximum_speed', 'reliability', 'defense', 'breakthrough', 'hardness', 'armor_value', 'soft_attack',
+            'hard_attack', 'ap_attack', 'air_attack', 'priority', 'visual_level'
+        ]
 
         for equipment in equipment_dict:
             if equipment[-1:].isdigit():
