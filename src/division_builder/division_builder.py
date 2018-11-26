@@ -13,7 +13,8 @@ class LandDivisionBuilder:
         units_file_list = [
             'anti_tank.txt', 'anti_tank_brigade.txt', 'anti-air.txt', 'anti-air_brigade.txt', 'artillery.txt',
             'artillery_brigade.txt', 'cavalry.txt', 'engineer.txt', 'field_hospital.txt', 'heavy_armor.txt',
-            'infantry.txt', 'logistics.txt', 'maintenance.txt', 'medium_armor.txt', 'military_police.txt',
+            'infantry.txt', 'light_armor.txt', 'logistics.txt', 'maintenance.txt', 'medium_armor.txt',
+            'military_police.txt',
             'modern_armor.txt', 'recon.txt', 'signal.txt', 'sp_anti-air_brigade.txt', 'sp_artillery_brigade.txt',
             'super_heavy_armor.txt', 'tank_destroyer_brigade.txt'
         ]
@@ -62,6 +63,7 @@ class LandDivisionBuilder:
             'supply_consumption', 'soft_attack', 'hard_attack', 'air_attack', 'defense', 'breakthrough',
             'armor_value', 'ap_attack', 'combat_width', 'manpower', 'training_time', 'need', 'reliability_factor',
             'equipment_capture_factor', 'casualty_trickleback', 'experience_loss_factor', 'entrenchment', 'recon',
+            'hardness'
         ]
         stats_dict = {k: [] for k in stats_list}  # type: dict
         for battalion_type in battalion_types:
@@ -98,6 +100,8 @@ class LandDivisionBuilder:
             'Combat Width': round_sum(stats_dict['combat_width']),
             'Manpower': round_sum(stats_dict['manpower']),
             'Training Time': round_max(stats_dict['training_time']),
+            'Hardness': round_util(sum(stats_dict['hardness']) / len(
+                stats_dict['hardness'])),
             'Need': dict(_need)
 
         }
