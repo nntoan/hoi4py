@@ -44,13 +44,27 @@ class LandDivisionBuilder:
         equipment_stats_dict = self.equipment_stats_dict.copy()
         stat_dicts = {}  # type: dict
         battalion_types = ['regiments', 'supports']
+        stats_list = [
+            'maximum_speed', 'max_strength', 'max_organisation', 'default_morale', 'suppression', 'weight',
+            'supply_consumption', 'soft_attack', 'hard_attack', 'air_attack', 'defense', 'breakthrough',
+            'armor_value', 'ap_attack', 'combat_width', 'manpower', 'training_time', 'need', 'reliability_factor',
+            'equipment_capture_factor', 'casualty_trickleback', 'experience_loss_factor', 'entrenchment', 'recon',
+            'hardness', 'priority', 'sprite'
+        ]
+        equipment_stats_list = [
+            'maximum_speed', 'max_strength', 'max_organisation', 'default_morale', 'suppression', 'weight',
+            'supply_consumption', 'soft_attack', 'hard_attack', 'air_attack', 'defense', 'breakthrough',
+            'armor_value', 'ap_attack', 'combat_width', 'manpower', 'training_time', 'need', 'reliability_factor',
+            'equipment_capture_factor', 'casualty_trickleback', 'experience_loss_factor', 'entrenchment', 'recon',
+            'hardness'
+        ]
         for battalion_type in battalion_types:
             for battalion in set(division_template_dict[battalion_type]):
                 stat_dict = {}  # type: dict
                 for stat in self.units_dict[battalion]:
                     stat_dict[stat] = self.units_dict[battalion][stat]
                 for equipment_name in division_template_dict['equipments'][battalion]:
-                    for stat in equipment_stats_dict[equipment_name]:
+                    for stat in set(equipment_stats_dict[equipment_name]) & set(equipment_stats_list):
                         stat_dict[stat] = equipment_stats_dict[equipment_name][stat]
                     stat_dicts[battalion] = stat_dict
                 if battalion in division_template_dict['technologies']:
@@ -58,13 +72,7 @@ class LandDivisionBuilder:
                         stat_dicts[battalion][stat] = stat_dicts[battalion][stat] * (
                                     1 + sum(division_template_dict['technologies'][battalion][stat]))
 
-        stats_list = [
-            'maximum_speed', 'max_strength', 'max_organisation', 'default_morale', 'suppression', 'weight',
-            'supply_consumption', 'soft_attack', 'hard_attack', 'air_attack', 'defense', 'breakthrough',
-            'armor_value', 'ap_attack', 'combat_width', 'manpower', 'training_time', 'need', 'reliability_factor',
-            'equipment_capture_factor', 'casualty_trickleback', 'experience_loss_factor', 'entrenchment', 'recon',
-            'hardness'
-        ]
+
         stats_dict = {k: [] for k in stats_list}  # type: dict
         for battalion_type in battalion_types:
             for battalion in division_template_dict[battalion_type]:
@@ -74,6 +82,13 @@ class LandDivisionBuilder:
         _need = Counter({})  # type: Counter
         for item in stats_dict['need']:
             _need = _need + Counter(item)
+
+        _priority = {}
+        for i in range(len(stats_dict['sprite'])):
+            if stats_dict['sprite'][i] not in _priority:
+                _priority[stats_dict['sprite'][i]] = 0
+            _priority[stats_dict['sprite'][i]] = _priority[stats_dict['sprite'][i]] + stats_dict['priority'][i]
+
         result = {
             'Max Speed': round_min(stats_dict['maximum_speed']),
             'HP': round_sum(stats_dict['max_strength']),
@@ -102,7 +117,8 @@ class LandDivisionBuilder:
             'Training Time': round_max(stats_dict['training_time']),
             'Hardness': round_util(sum(stats_dict['hardness']) / len(
                 stats_dict['hardness'])),
-            'Need': dict(_need)
+            'Need': dict(_need),
+            'Priority': dict(_priority)
 
         }
         return result
