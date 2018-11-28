@@ -3,11 +3,6 @@ from collections import Counter
 from src.division_builder.utils import get_item_dict, round_sum, round_min, round_max, round_util
 
 
-class LandDivision:
-    def __init__(self, division_template_dict: dict):
-        self.division_template_dict = division_template_dict
-
-
 class LandDivisionBuilder:
     def __init__(self, root_path: str):
         units_file_list = [
@@ -90,6 +85,8 @@ class LandDivisionBuilder:
             _priority[stats_dict['sprite'][i]] = _priority[stats_dict['sprite'][i]] + stats_dict['priority'][i]
 
         result = {
+            'Name': division_template_dict['name'],
+            'Division Names Group': division_template_dict['division_names_group'],
             'Max Speed': round_min(stats_dict['maximum_speed']),
             'HP': round_sum(stats_dict['max_strength']),
             'Organisation': round_util(sum(stats_dict['max_organisation']) / len(stats_dict['max_organisation'])),
@@ -118,7 +115,11 @@ class LandDivisionBuilder:
             'Hardness': round_util(sum(stats_dict['hardness']) / len(
                 stats_dict['hardness'])),
             'Need': dict(_need),
-            'Priority': dict(_priority)
+            'Priority': dict(_priority),
+            'Template': {
+                'regiments': division_template_dict['regiments'],
+                'supports': division_template_dict['supports'],
+            }
 
         }
         return result
