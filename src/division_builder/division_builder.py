@@ -53,19 +53,45 @@ class LandDivisionBuilder:
             'equipment_capture_factor', 'casualty_trickleback', 'experience_loss_factor', 'entrenchment', 'recon',
             'hardness'
         ]
+        unit_stat_percent_list = ['soft_attack', 'hard_attack', 'breakthrough', 'defense', 'ap_attack', 'air_attack']
         for battalion_type in battalion_types:
             for battalion in set(division_template_dict[battalion_type]):
-                stat_dict = {}  # type: dict
+                stat_dict = {
+                    'fixed': {},
+                    'percent': {},
+                }  # type: dict
                 for stat in self.units_dict[battalion]:
+                    if stat in unit_stat_percent_list:
+                        stat_dict['percent'][stat] = self.units_dict[battalion][stat]
+                    else:
+                        stat_dict['fixed'][stat] = self.units_dict[battalion][stat]
                     stat_dict[stat] = self.units_dict[battalion][stat]
                 for equipment_name in division_template_dict['equipments'][battalion]:
                     for stat in set(equipment_stats_dict[equipment_name]) & set(equipment_stats_list):
-                        stat_dict[stat] = equipment_stats_dict[equipment_name][stat]
-                    stat_dicts[battalion] = stat_dict
-                if battalion in division_template_dict['technologies']:
-                    for stat in division_template_dict['technologies'][battalion]:
-                        stat_dicts[battalion][stat] = stat_dicts[battalion][stat] * (
-                                    1 + sum(division_template_dict['technologies'][battalion][stat]))
+                        if stat not in stat_dict['fixed']:
+                            stat_dict['fixed'][stat] = 0
+                        stat_dict['fixed'][stat] = stat_dict['fixed'][stat] + equipment_stats_dict[equipment_name][stat]
+                stat_dicts[battalion] = stat_dict
+
+                if battalion in division_template_dict['technologies']['percent']:
+                    for stat in division_template_dict['technologies']['percent'][battalion]:
+                        if stat not in stat_dicts[battalion]['percent']:
+                            stat_dicts[battalion]['percent'][stat] = 0
+                        stat_dicts[battalion]['percent'][stat] = stat_dicts[battalion]['percent'][stat] \
+                                                                 + sum(
+                            division_template_dict['technologies']['percent'][battalion][stat])
+                if battalion in division_template_dict['technologies']['fixed']:
+                    for stat in division_template_dict['technologies']['fixed'][battalion]:
+                        if stat not in stat_dicts[battalion]['fixed']:
+                            stat_dicts[battalion]['fixed'][stat] = 0
+                        stat_dicts[battalion]['fixed'][stat] = stat_dicts[battalion]['fixed'][stat] + \
+                                                               sum(division_template_dict['technologies']['fixed'][battalion][
+                                                              stat])
+                for stat in stat_dicts[battalion]['fixed']:
+                    stat_dicts[battalion][stat] = stat_dicts[battalion]['fixed'][stat]
+                    if stat in stat_dicts[battalion]['percent']:
+                        stat_dicts[battalion][stat] = stat_dicts[battalion][stat] * \
+                                                      (1 + stat_dicts[battalion]['percent'][stat])
 
 
         stats_dict = {k: [] for k in stats_list}  # type: dict
@@ -104,7 +130,8 @@ class LandDivisionBuilder:
             'Air attack': round_sum(stats_dict['air_attack']),
             'Defense': round_sum(stats_dict['defense']),
             'Breakthrough': round_sum(stats_dict['breakthrough']),
-            'Armor': round_util(max(stats_dict['armor_value']) * 0.3 + sum(stats_dict['armor_value']) * 0.7),
+            'Armor': round_util(max(stats_dict['armor_value']) * 0.3 + sum(stats_dict['armor_value']) / len(
+                stats_dict['armor_value']) * 0.7),
             'Piercing': round_util(max(stats_dict['ap_attack']) * 0.4 + sum(stats_dict['ap_attack']) / len(
                 stats_dict['ap_attack']) * 0.6),
             'Entrenchment': round_sum(stats_dict['entrenchment']),

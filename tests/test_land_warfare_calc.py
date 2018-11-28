@@ -5,8 +5,8 @@ from src.land_warfare.land_warfare_calc import get_damage_of_avoid_hit, get_hits
 
 class LandLandWarfareCalcCase(unittest.TestCase):
     def test_get_damage_of_avoid_hit(self):
-        dice_size, chance_to_avoid_hit = 4, 90
-        result = get_damage_of_avoid_hit(dice_size, chance_to_avoid_hit)
+        dice_size, chance_to_avoid_hit, damage_modifier = 4, 90, 0.05
+        result = get_damage_of_avoid_hit(dice_size, chance_to_avoid_hit, damage_modifier)
 
         self.assertIsNotNone(result)
 
@@ -17,10 +17,11 @@ class LandLandWarfareCalcCase(unittest.TestCase):
         self.assertTrue(hits_at_def == def_or_bt and hits_at_no_def == sa_or_ha - def_or_bt)
 
     def test_sum_for_result_with_func(self):
-        dice_size, chance_to_avoid_hit, n = 4, 90, 100
+        dice_size, chance_to_avoid_hit, damage_modifier, n = 4, 90, 0.05, 100
         result = sum_for_result_with_func(get_damage_of_avoid_hit,
                                           dice_size,
                                           chance_to_avoid_hit,
+                                          damage_modifier,
                                           n=100)
 
         self.assertTrue(result > (1 * (100 - chance_to_avoid_hit) / 100 * 0.05) * n)
