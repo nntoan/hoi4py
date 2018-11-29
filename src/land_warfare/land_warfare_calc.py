@@ -1,6 +1,7 @@
 import random
 
 from src.division_builder.division_builder import LandDivisionBuilder
+from src.utils import sum_for_result_with_func
 
 LAND_COMBAT_ORG_DICE_SIZE = 4
 LAND_COMBAT_STR_DICE_SIZE = 2
@@ -35,15 +36,6 @@ def get_hits(sa_or_ha: int, def_or_bt: int) -> (int, int):
     return round(hit_at_def), round(hit_at_no_def)
 
 
-def sum_for_result_with_func(func, *avgs, n: int):
-    _list = []
-    for i in range(n):
-        _list.append(func(*avgs))
-    result = sum(_list)
-
-    return result
-
-
 def calc_damage(a, b, def_type):
     atk_sa = round(a['Soft attack'] / 10)
     atk_ha = round(a['Hard attack'] / 10)
@@ -52,15 +44,14 @@ def calc_damage(a, b, def_type):
     org_soft_dice_size = LAND_COMBAT_ORG_DICE_SIZE
     org_hard_dice_size = LAND_COMBAT_ORG_DICE_SIZE
     org_damage_modifier = LAND_COMBAT_ORG_DAMAGE_MODIFIER
+    org_chance_to_avoid_hit_at_def = BASE_CHANCE_TO_AVOID_HIT
+    org_chance_to_avoid_hit_at_no_def = CHANCE_TO_AVOID_HIT_AT_NO_DEF
 
     if a['Armor'] >= b['Piercing']:
         org_soft_dice_size = LAND_COMBAT_ORG_ARMOR_ON_SOFT_DICE_SIZE
 
     if b['Armor'] >= a['Piercing']:
         org_damage_modifier = org_damage_modifier * LAND_COMBAT_ORG_ARMOR_DEFLECTION_FACTOR
-
-    org_chance_to_avoid_hit_at_def = BASE_CHANCE_TO_AVOID_HIT
-    org_chance_to_avoid_hit_at_no_def = CHANCE_TO_AVOID_HIT_AT_NO_DEF
 
     soft_hits = round(atk_sa * (1 - b['Hardness']))
     hard_hits = round(atk_ha * b['Hardness'])

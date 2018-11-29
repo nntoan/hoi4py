@@ -1,6 +1,6 @@
 from collections import Counter
 
-from src.division_builder.utils import get_item_dict, round_sum, round_min, round_max, round_util
+from src.utils import get_item_dict, round_sum, round_min, round_max, round_util
 
 
 class LandDivisionBuilder:
@@ -57,20 +57,20 @@ class LandDivisionBuilder:
         for battalion_type in battalion_types:
             for battalion in set(division_template_dict[battalion_type]):
                 stat_dict = {
-                    'fixed': {},
+                    'base': {},
                     'percent': {},
                 }  # type: dict
                 for stat in self.units_dict[battalion]:
                     if stat in unit_stat_percent_list:
                         stat_dict['percent'][stat] = self.units_dict[battalion][stat]
                     else:
-                        stat_dict['fixed'][stat] = self.units_dict[battalion][stat]
+                        stat_dict['base'][stat] = self.units_dict[battalion][stat]
                     stat_dict[stat] = self.units_dict[battalion][stat]
                 for equipment_name in division_template_dict['equipments'][battalion]:
                     for stat in set(equipment_stats_dict[equipment_name]) & set(equipment_stats_list):
-                        if stat not in stat_dict['fixed']:
-                            stat_dict['fixed'][stat] = 0
-                        stat_dict['fixed'][stat] = stat_dict['fixed'][stat] + equipment_stats_dict[equipment_name][stat]
+                        if stat not in stat_dict['base']:
+                            stat_dict['base'][stat] = 0
+                        stat_dict['base'][stat] = stat_dict['base'][stat] + equipment_stats_dict[equipment_name][stat]
                 stat_dicts[battalion] = stat_dict
 
                 if battalion in division_template_dict['technologies']['percent']:
@@ -80,15 +80,16 @@ class LandDivisionBuilder:
                         stat_dicts[battalion]['percent'][stat] = stat_dicts[battalion]['percent'][stat] \
                                                                  + sum(
                             division_template_dict['technologies']['percent'][battalion][stat])
-                if battalion in division_template_dict['technologies']['fixed']:
-                    for stat in division_template_dict['technologies']['fixed'][battalion]:
+                if battalion in division_template_dict['technologies']['base']:
+                    for stat in division_template_dict['technologies']['base'][battalion]:
                         if stat not in stat_dicts[battalion]['fixed']:
-                            stat_dicts[battalion]['fixed'][stat] = 0
-                        stat_dicts[battalion]['fixed'][stat] = stat_dicts[battalion]['fixed'][stat] + \
-                                                               sum(division_template_dict['technologies']['fixed'][battalion][
+                            stat_dicts[battalion]['base'][stat] = 0
+                        stat_dicts[battalion]['base'][stat] = stat_dicts[battalion]['base'][stat] + \
+                                                              sum(division_template_dict['technologies']['base'][
+                                                                      battalion][
                                                               stat])
-                for stat in stat_dicts[battalion]['fixed']:
-                    stat_dicts[battalion][stat] = stat_dicts[battalion]['fixed'][stat]
+                for stat in stat_dicts[battalion]['base']:
+                    stat_dicts[battalion][stat] = stat_dicts[battalion]['base'][stat]
                     if stat in stat_dicts[battalion]['percent']:
                         stat_dicts[battalion][stat] = stat_dicts[battalion][stat] * \
                                                       (1 + stat_dicts[battalion]['percent'][stat])

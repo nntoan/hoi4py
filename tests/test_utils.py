@@ -1,6 +1,6 @@
 import unittest
 
-from src.division_builder.utils import get_item_dict, list_item_path, get_item, trans_dict
+from src.utils import get_item_dict, list_item_path, get_item, trans_dict
 
 
 class LandDivisionBuilderUtilsCase(unittest.TestCase):

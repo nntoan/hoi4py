@@ -192,7 +192,7 @@ technologies = {
         },
     },
 
-    'fixed': {
+    'base': {
         'marine': {
             'max_organisation': [
                 5 * 2,  # 海军陆战队

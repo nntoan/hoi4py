@@ -55,3 +55,12 @@ def trans_dict(in_dict: dict) -> dict:
                 out_dict[b] = {}
             out_dict[b][a] = in_dict[a][b]
     return out_dict
+
+
+def sum_for_result_with_func(func, *avgs, n: int):
+    _list = []
+    for i in range(n):
+        _list.append(func(*avgs))
+    result = sum(_list)
+
+    return result

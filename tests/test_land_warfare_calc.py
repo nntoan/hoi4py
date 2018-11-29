@@ -1,6 +1,7 @@
 import unittest
 
-from src.land_warfare.land_warfare_calc import get_damage_of_avoid_hit, get_hits, sum_for_result_with_func, calc_damage
+from src.land_warfare.land_warfare_calc import get_damage_of_avoid_hit, get_hits, calc_damage
+from src.utils import sum_for_result_with_func
 
 
 class LandLandWarfareCalcCase(unittest.TestCase):
