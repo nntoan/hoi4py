@@ -66,55 +66,58 @@ def calc_damage(a, b, def_type):
     total_hits = soft_hits + hard_hits
     hits_at_def, hits_at_no_def = get_hits(total_hits, round(def_))
 
-    soft_hits_at_def = round(hits_at_def / total_hits * soft_hits)
-    hard_hits_at_def = round(hits_at_def / total_hits * hard_hits)
-    soft_hits_at_no_def = round(hits_at_no_def / total_hits * soft_hits)
-    hard_hits_at_no_def = round(hits_at_no_def / total_hits * hard_hits)
+    org_damage, str_damage = 0, 0
 
-    org_soft_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                      org_soft_dice_size,
-                                                      org_chance_to_avoid_hit_at_def,
-                                                      org_damage_modifier,
-                                                      n=soft_hits_at_def)
-    org_hard_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                      org_hard_dice_size,
-                                                      org_chance_to_avoid_hit_at_def,
-                                                      org_damage_modifier,
-                                                      n=hard_hits_at_def)
-    org_soft_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                         org_soft_dice_size,
-                                                         org_chance_to_avoid_hit_at_no_def,
-                                                         org_damage_modifier,
-                                                         n=soft_hits_at_no_def)
-    org_hard_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                         org_hard_dice_size,
-                                                         org_chance_to_avoid_hit_at_no_def,
-                                                         org_damage_modifier,
-                                                         n=hard_hits_at_no_def)
+    if total_hits > 0:
+        soft_hits_at_def = round((hits_at_def / total_hits) * soft_hits)
+        hard_hits_at_def = round((hits_at_def / total_hits) * hard_hits)
+        soft_hits_at_no_def = round((hits_at_no_def / total_hits) * soft_hits)
+        hard_hits_at_no_def = round((hits_at_no_def / total_hits) * hard_hits)
 
-    str_soft_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                      str_soft_dice_size,
-                                                      str_chance_to_avoid_hit_at_def,
-                                                      str_damage_modifier,
-                                                      n=soft_hits_at_def)
-    str_hard_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                      str_hard_dice_size,
-                                                      str_chance_to_avoid_hit_at_def,
-                                                      str_damage_modifier,
-                                                      n=hard_hits_at_def)
-    str_soft_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                         str_soft_dice_size,
-                                                         str_chance_to_avoid_hit_at_no_def,
-                                                         str_damage_modifier,
-                                                         n=soft_hits_at_no_def)
-    str_hard_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
-                                                         str_hard_dice_size,
-                                                         str_chance_to_avoid_hit_at_no_def,
-                                                         str_damage_modifier,
-                                                         n=hard_hits_at_no_def)
+        org_soft_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                          org_soft_dice_size,
+                                                          org_chance_to_avoid_hit_at_def,
+                                                          org_damage_modifier,
+                                                          n=soft_hits_at_def)
+        org_hard_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                          org_hard_dice_size,
+                                                          org_chance_to_avoid_hit_at_def,
+                                                          org_damage_modifier,
+                                                          n=hard_hits_at_def)
+        org_soft_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                             org_soft_dice_size,
+                                                             org_chance_to_avoid_hit_at_no_def,
+                                                             org_damage_modifier,
+                                                             n=soft_hits_at_no_def)
+        org_hard_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                             org_hard_dice_size,
+                                                             org_chance_to_avoid_hit_at_no_def,
+                                                             org_damage_modifier,
+                                                             n=hard_hits_at_no_def)
 
-    org_damage = org_soft_damage_at_def + org_hard_damage_at_def + org_soft_damage_at_no_def + org_hard_damage_at_no_def
+        str_soft_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                          str_soft_dice_size,
+                                                          str_chance_to_avoid_hit_at_def,
+                                                          str_damage_modifier,
+                                                          n=soft_hits_at_def)
+        str_hard_damage_at_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                          str_hard_dice_size,
+                                                          str_chance_to_avoid_hit_at_def,
+                                                          str_damage_modifier,
+                                                          n=hard_hits_at_def)
+        str_soft_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                             str_soft_dice_size,
+                                                             str_chance_to_avoid_hit_at_no_def,
+                                                             str_damage_modifier,
+                                                             n=soft_hits_at_no_def)
+        str_hard_damage_at_no_def = sum_for_result_with_func(get_damage_of_avoid_hit,
+                                                             str_hard_dice_size,
+                                                             str_chance_to_avoid_hit_at_no_def,
+                                                             str_damage_modifier,
+                                                             n=hard_hits_at_no_def)
 
-    str_damage = str_soft_damage_at_def + str_hard_damage_at_def + str_soft_damage_at_no_def + str_hard_damage_at_no_def
+        org_damage = org_soft_damage_at_def + org_hard_damage_at_def + org_soft_damage_at_no_def + org_hard_damage_at_no_def
+
+        str_damage = str_soft_damage_at_def + str_hard_damage_at_def + str_soft_damage_at_no_def + str_hard_damage_at_no_def
 
     return org_damage, str_damage

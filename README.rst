@@ -3,6 +3,11 @@ HOI4py
 
 HOI4py is an Open Source Tool for Heart of Iron 4
 
+Usage
+-----
+
+e.g.: https://gist.github.com/LokiSharp/849000c48c91d3d7a38f9e36cab4e27c
+
 Installation
 ------------
 
