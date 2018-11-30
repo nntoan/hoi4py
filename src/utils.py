@@ -1,6 +1,6 @@
 import os
 
-from src.vanilla_parsing.parse_def import Dictionary
+from src.hoi4_parsing.parse_def import Dictionary
 
 round_degree = 5
 
